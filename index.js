@@ -33,18 +33,20 @@ minhaApi.get('/receitas/:id', (req, res) => {
     }
 });
 
-// Adiciona uma nova receita
 minhaApi.post('/receitas/add', (req, res) => {
-    let maiorID = Math.max(...listaReceitas.map(({ id }) => id));
+    let maiorID = 0; // Inicializa o maior ID como 0
+
+    if (listaReceitas.length > 0) {
+        // Se a lista de receitas não estiver vazia, calcula o maior ID
+        maiorID = Math.max(...listaReceitas.map(({ id }) => id));
+    }
+
     const objReceita = {
-        id: maiorID + 1,
+        id: maiorID === -Infinity ? 1 : maiorID + 1, // Corrige o valor do novo ID
         descricao: req.body.descricao,
         valor: req.body.valor,
         categoria: req.body.categoria
     };
-    if (!listaReceitas.length) {
-        maiorID = 0;
-    }
 
     listaReceitas.push(objReceita);
     res.send('receita adicionada');
@@ -110,21 +112,24 @@ minhaApi.get('/despesas/:id', (req, res) => {
 
 // Adiciona uma nova despesa
 minhaApi.post('/despesas/add', (req, res) => {
-    let maiorID = Math.max(...listaDespesas.map(({ id }) => id));
-    if (!listaDespesas.length) {
-        maiorID = 0;
+    let maiorID = 0; // Inicializa o maior ID como 0
+
+    if (listaDespesas.length > 0) {
+        // Se a lista de despesas não estiver vazia, calcula o maior ID
+        maiorID = Math.max(...listaDespesas.map(({ id }) => id));
     }
 
     const novaDespesa = {
-        id: maiorID + 1,
+        id: maiorID === -Infinity ? 1 : maiorID + 1, // Corrige o valor do novo ID
         descricao: req.body.descricao,
         valor: req.body.valor,
         categoria: req.body.categoria
     };
-    
+
     listaDespesas.push(novaDespesa);
     res.send('despesa adicionada');
 });
+
 
 // Rota para atualização de uma despesa pelo código
 minhaApi.put('/despesas/:id', (req, res) => {
