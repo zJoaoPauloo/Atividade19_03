@@ -4,29 +4,22 @@ const minhaApi = express();
 minhaApi.use(express.json());
 
 const listaReceitas = [
-    {
-        id: 1,
-        descricao: 'salario',
-        valor: 'Responsável pelo desenvolvimento de software.',
-        categoria: 'Trabalho fixo'
-    },
-    {
-        id: 2,
-        descricao: 'extras',
-        valor: 'Responsável pelo desenvolvimento de software.',
-        categoria: 'motoboy'
-    },
-    {
-        id: 3,
-        descricao: 'venda',
-        valor: 'Responsável pelo desenvolvimento de software.',
-        categoria: 'vendas de camisas'
-    }
+  
 ];
 
 // Rota para consulta de todas as receitas
 minhaApi.get('/receitas', (req, res) => {
-    res.json(listaReceitas);
+    let receitasInfo = '';
+
+    for(const receita of listaReceitas){
+        receitasInfo += '<p>';
+        receitasInfo += "id: "+receita.id+"<br>";
+        receitasInfo += "descrição: "+receita.descricao+"<br>";
+        receitasInfo += "valor: "+receita.valor+"<br>";
+        receitasInfo += "categoria: "+receita.categoria+"<br>";
+        receitasInfo += '</p><br>';
+    }
+    res.send(receitasInfo);
 });
 
 // Rota para consulta de uma receita pelo código
@@ -40,11 +33,21 @@ minhaApi.get('/receitas/:id', (req, res) => {
     }
 });
 
-// Rota para cadastro de uma receita
-minhaApi.post('/receitas', (req, res) => {
-    const novaReceita = req.body;
-    listaReceitas.push(novaReceita);
-    res.status(201).send();
+// Adiciona uma nova receita
+minhaApi.post('/receitas/add', (req, res) => {
+    let maiorID = Math.max(...listaReceitas.map(({ id }) => id));
+    const objReceita = {
+        id: maiorID + 1,
+        descricao: req.body.descricao,
+        valor: req.body.valor,
+        categoria: req.body.categoria
+    };
+    if (!listaReceitas.length) {
+        maiorID = 0;
+    }
+
+    listaReceitas.push(objReceita);
+    res.send('receita adicionada');
 });
 
 // Rota para atualização de uma receita pelo código
@@ -76,23 +79,22 @@ minhaApi.delete('/receitas/:id', (req, res) => {
 //________________________________________________
 
 const listaDespesas = [
-    {
-        id: 1,
-        descricao: 'aluguel',
-        valor: 1000,
-        categoria: 'Moradia'
-    },
-    {
-        id: 2,
-        descricao: 'compras',
-        valor: 500,
-        categoria: 'Alimentação'
-    }
+ 
 ];
 
 // Rota para consulta de todas as despesas
 minhaApi.get('/despesas', (req, res) => {
-    res.json(listaDespesas);
+    let despesasInfo = '';
+
+    for(const despesa of listaDespesas){
+        despesasInfo += '<p>';
+        despesasInfo += "id: "+despesa.id+"<br>";
+        despesasInfo += "descrição: "+despesa.descricao+"<br>";
+        despesasInfo += "valor: "+despesa.valor+"<br>";
+        despesasInfo += "categoria: "+despesa.categoria+"<br>";
+        despesasInfo += '</p><br>';
+    }
+    res.send(despesasInfo);
 });
 
 // Rota para consulta de uma despesa pelo código
@@ -106,11 +108,22 @@ minhaApi.get('/despesas/:id', (req, res) => {
     }
 });
 
-// Rota para cadastro de uma despesa
-minhaApi.post('/despesas', (req, res) => {
-    const novaDespesa = req.body;
+// Adiciona uma nova despesa
+minhaApi.post('/despesas/add', (req, res) => {
+    let maiorID = Math.max(...listaDespesas.map(({ id }) => id));
+    if (!listaDespesas.length) {
+        maiorID = 0;
+    }
+
+    const novaDespesa = {
+        id: maiorID + 1,
+        descricao: req.body.descricao,
+        valor: req.body.valor,
+        categoria: req.body.categoria
+    };
+    
     listaDespesas.push(novaDespesa);
-    res.status(201).send();
+    res.send('despesa adicionada');
 });
 
 // Rota para atualização de uma despesa pelo código
